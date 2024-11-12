@@ -3,29 +3,10 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-//import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-//import ActionMenu from 'components/common/ActionMenu';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-//const actions = [
-//  {
-//    id: 1,
-//    icon: 'mage:refresh',
-//    title: 'Refresh',
-//  },
-//  {
-//    id: 2,
-//    icon: 'mage:eye',
-//    title: 'View All',
-//  },
-//  {
-//    id: 3,
-//    icon: 'mage:share',
-//    title: 'Share',
-//  },
-//];
 
 const AddBookForm = () => {
   const [book, setBook] = useState({

@@ -1,6 +1,6 @@
 import Grid from '@mui/material/Grid';
-import RecentOrders from 'components/sections/dashboard/recent-orders';
-import TopSelling from 'components/sections/dashboard/top-selling';
+import RecentOrders from 'components/sections/dashboard/book-inventory-table';
+import TopSelling from 'components/sections/dashboard/add-book';
 
 const Dashboard = () => {
   return (

@@ -38,7 +38,7 @@ export const rows: RowsProps[] = [
     id: '#1003',
     title: "Faust geht in eine hoehle und kauft sich ein brot das lecker schmecker macht und toll ist",
     author: ["Goethe"],
-    genre: "Drama",
+    genre: "Horror",
     release: new Date('December 17, 1808'),
     ISBN: [1,2,3,4,5,6,7,8,9,10]
   },
