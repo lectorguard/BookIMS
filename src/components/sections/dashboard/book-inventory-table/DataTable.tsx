@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef, useGridApiRef, GridApi } from '@mui/x-data-grid';
 import DataGridFooter from 'components/common/DataGridFooter';
 import ActionMenu from 'components/common/ActionMenu';
-import { rows, ISBN10, ISBN13 } from 'data/bookInventory';
-
+import { ISBN10, ISBN13, Book } from 'database/common';
+import { fetchData } from 'database/requests';
 
 const actions = [
   {
@@ -14,7 +14,7 @@ const actions = [
   }
 ];
 
-const columns: GridColDef<(typeof rows)[number]>[] = [
+const columns: GridColDef[] = [
   {
     field: '__check__',
     headerName: '',
@@ -29,7 +29,7 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     align: 'left',
     flex: 2,
     minWidth: 120,
-    sortComparator: (v1, v2) => v1.localeCompare(v2),
+    sortComparator: (v1, v2) => v1.localeCompare(v2)
   },
   {
     field: 'title',
@@ -54,7 +54,7 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     )
   },
   {
-    field: 'author',
+    field: 'authors',
     headerName: 'Author',
     editable: false,
     align: 'left',
@@ -80,16 +80,33 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     },
   },
   {
-    field: 'genre',
+    field: 'genres',
     headerName: 'Genre',
     editable: false,
     align: 'left',
     flex: 2,
     minWidth: 100,
     sortComparator: (v1, v2) => v1.localeCompare(v2),
+    renderCell: (params) => (
+      <Typography
+        variant="body2"
+        noWrap={false} // Allow text wrapping
+        sx={{
+          whiteSpace: 'normal', // Allow wrapping
+          overflow: 'hidden', // Hide overflowed text if any
+          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+        }}
+      >
+        {params.value}
+      </Typography>
+    ),
+    valueGetter: (params : string[]) => {
+      // Assuming the object has `firstName` and `lastName` properties
+      return `${params.join(', ')}`
+    },
   },
   {
-    field: 'release',
+    field: 'publication_date',
     headerName: 'Release',
     editable: false,
     align: 'left',
@@ -98,11 +115,27 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
     sortComparator: (v1, v2) => v1.localeCompare(v2),
     valueGetter: (params : Date) => {
       // Assuming the object has `firstName` and `lastName` properties
-      return `${params.getMonth()}-${[params.getFullYear()]}`
+      const [month, , year] = params.toLocaleDateString().split('/');
+      return `${month.padStart(2,'0')}-${year.padStart(2,'0')}`;
     },
+    renderCell: (params) => (
+      <Typography
+        variant="body2"
+        noWrap={false} // Allow text wrapping
+        sx={{
+          whiteSpace: 'normal', // Allow wrapping
+          overflow: 'hidden', // Hide overflowed text if any
+          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+          alignItems: 'center',
+          display: 'flex', 
+        }}
+      >
+        {params.value}
+      </Typography>
+    ),
   },
   {
-    field: 'ISBN',
+    field: 'isbn',
     headerName: 'ISBN',
     editable: false,
     align: 'left',
@@ -119,6 +152,19 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
         return `${params.join('')}`;
       }
     },
+    renderCell: (params) => (
+      <Typography
+        variant="body2"
+        noWrap={false} // Allow text wrapping
+        sx={{
+          whiteSpace: 'normal', // Allow wrapping
+          overflow: 'hidden', // Hide overflowed text if any
+          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+        }}
+      >
+        {params.value}
+      </Typography>
+    ),
   },
   {
     field: 'action',
@@ -135,14 +181,26 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
 
 interface TaskOverviewTableProps {
   searchText: string;
+  updateInventory: boolean;
 }
 
-const DataTable = ({ searchText }: TaskOverviewTableProps) => {
+const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
   const apiRef = useGridApiRef<GridApi>();
 
   useEffect(() => {
     apiRef.current.setQuickFilterValues(searchText.split(/\b\W+\b/).filter((word) => word !== ''));
   }, [searchText]);
+
+
+  const [rows, setRows] = useState<Book[]>([]);
+
+  // Fetch data when the component mounts or when searchText changes
+  useEffect(() => {
+    fetchData(searchText, setRows); // Call the fetch function when searchText changes or component mounts
+  }, [searchText, updateInventory]);
+
+
+  
 
   return (
     <DataGrid

@@ -8,7 +8,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconifyIcon from 'components/base/IconifyIcon';
 import DataTable from './DataTable';
 
-const RecentOrders = () => {
+interface InventoryProps{
+  updateInventory : boolean
+}
+
+const BookInventory = ({updateInventory} : InventoryProps) => {
   const [searchText, setSearchText] = useState('');
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,10 +50,10 @@ const RecentOrders = () => {
       </Stack>
 
       <Box mt={{ xs: 1.5, sm: 0.75 }} sx={{ mb: -3 }}>
-        <DataTable searchText={searchText}/>
+        <DataTable searchText={searchText} updateInventory={updateInventory} />
       </Box>
     </Paper>
   );
 };
 
-export default RecentOrders;
+export default BookInventory;
