@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef, useGridApiRef, GridApi } from '@mui/x-data-grid';
 import DataGridFooter from 'components/common/DataGridFooter';
@@ -6,178 +6,29 @@ import ActionMenu from 'components/common/ActionMenu';
 import { ISBN10, ISBN13, Book } from 'database/common';
 import { fetchData } from 'database/requests';
 
+
+const doExport = (books : Book[]) => 
+{
+  const jsonContent = JSON.stringify(books, null, 2); // Pretty print with 2-space indentation
+  const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'inventory_books.json'; // Specify the filename
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+
 const actions = [
   {
     id: 2,
     icon: 'solar:export-linear',
     title: 'Export',
+    onClick: doExport
   }
 ];
 
-const columns: GridColDef[] = [
-  {
-    field: '__check__',
-    headerName: '',
-    width: 40,
-    sortable: false,
-    disableColumnMenu: true,
-  },
-  {
-    field: 'id',
-    headerName: 'Entry ID',
-    editable: false,
-    align: 'left',
-    flex: 2,
-    minWidth: 120,
-    sortComparator: (v1, v2) => v1.localeCompare(v2)
-  },
-  {
-    field: 'title',
-    headerName: 'Title',
-    editable: false,
-    align: 'left',
-    flex: 2,
-    minWidth: 400,
-    sortComparator: (v1, v2) => v1.localeCompare(v2),
-    renderCell: (params) => (
-      <Typography
-        variant="body2"
-        noWrap={false} // Allow text wrapping
-        sx={{
-          whiteSpace: 'normal', // Allow wrapping
-          overflow: 'hidden', // Hide overflowed text if any
-          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
-        }}
-      >
-        {params.value}
-      </Typography>
-    )
-  },
-  {
-    field: 'authors',
-    headerName: 'Author',
-    editable: false,
-    align: 'left',
-    flex: 2,
-    minWidth: 200,
-    sortComparator: (v1, v2) => v1.localeCompare(v2),
-    renderCell: (params) => (
-      <Typography
-        variant="body2"
-        noWrap={false} // Allow text wrapping
-        sx={{
-          whiteSpace: 'normal', // Allow wrapping
-          overflow: 'hidden', // Hide overflowed text if any
-          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
-        }}
-      >
-        {params.value}
-      </Typography>
-    ),
-    valueGetter: (params : string[]) => {
-      // Assuming the object has `firstName` and `lastName` properties
-      return `${params.join(', ')}`
-    },
-  },
-  {
-    field: 'genres',
-    headerName: 'Genre',
-    editable: false,
-    align: 'left',
-    flex: 2,
-    minWidth: 100,
-    sortComparator: (v1, v2) => v1.localeCompare(v2),
-    renderCell: (params) => (
-      <Typography
-        variant="body2"
-        noWrap={false} // Allow text wrapping
-        sx={{
-          whiteSpace: 'normal', // Allow wrapping
-          overflow: 'hidden', // Hide overflowed text if any
-          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
-        }}
-      >
-        {params.value}
-      </Typography>
-    ),
-    valueGetter: (params : string[]) => {
-      // Assuming the object has `firstName` and `lastName` properties
-      return `${params.join(', ')}`
-    },
-  },
-  {
-    field: 'publication_date',
-    headerName: 'Release',
-    editable: false,
-    align: 'left',
-    flex: 2,
-    minWidth: 50,
-    sortComparator: (v1, v2) => v1.localeCompare(v2),
-    valueGetter: (params : Date) => {
-      // Assuming the object has `firstName` and `lastName` properties
-      const [month, , year] = params.toLocaleDateString().split('/');
-      return `${month.padStart(2,'0')}-${year.padStart(2,'0')}`;
-    },
-    renderCell: (params) => (
-      <Typography
-        variant="body2"
-        noWrap={false} // Allow text wrapping
-        sx={{
-          whiteSpace: 'normal', // Allow wrapping
-          overflow: 'hidden', // Hide overflowed text if any
-          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
-          alignItems: 'center',
-          display: 'flex', 
-        }}
-      >
-        {params.value}
-      </Typography>
-    ),
-  },
-  {
-    field: 'isbn',
-    headerName: 'ISBN',
-    editable: false,
-    align: 'left',
-    flex: 2,
-    minWidth: 120,
-    sortComparator: (v1, v2) => v1.localeCompare(v2),
-    valueGetter: (params : ISBN10 | ISBN13) => {
-      if ('prefix' in params)
-      {
-        return `${params.prefix.join('')}-${params.isbn10.join('')}`;
-      }
-      else
-      {
-        return `${params.join('')}`;
-      }
-    },
-    renderCell: (params) => (
-      <Typography
-        variant="body2"
-        noWrap={false} // Allow text wrapping
-        sx={{
-          whiteSpace: 'normal', // Allow wrapping
-          overflow: 'hidden', // Hide overflowed text if any
-          textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
-        }}
-      >
-        {params.value}
-      </Typography>
-    ),
-  },
-  {
-    field: 'action',
-    headerAlign: 'right',
-    align: 'right',
-    editable: false,
-    sortable: false,
-    flex: 1,
-    minWidth: 100,
-    renderHeader: () => <ActionMenu actions={actions} />,
-    renderCell: () => <ActionMenu actions={actions} />,
-  },
-];
 
 interface TaskOverviewTableProps {
   searchText: string;
@@ -187,19 +38,264 @@ interface TaskOverviewTableProps {
 const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
   const apiRef = useGridApiRef<GridApi>();
 
-  useEffect(() => {
-    apiRef.current.setQuickFilterValues(searchText.split(/\b\W+\b/).filter((word) => word !== ''));
+  useEffect(() => {    
+    const toSearch = searchText.replace(/{[^}]*}/g, "").trim();
+    apiRef.current.setQuickFilterValues(toSearch.split(/\b\W+\b/).filter((word) => word !== ''));
   }, [searchText]);
+
+  const parseFilters = (searchText: string) => {
+    const regex = /\{(.*?)\}/g;
+    const matches = searchText.match(regex);
+
+    const column_list = ['title', 'author', 'genre', 'release', 'isbn'];
+    const operator_list = ['<', '>', '='];
+    
+    if (!matches) return [];
+    let isInvalid = false;
+    const result =  matches.map((match) => {
+      const [column, operator, value] = match
+        .slice(1, -1) // Remove the curly braces
+        .split(/(<=|>=|<|>|=)/); // Split by operators
+
+      if (!column_list.includes(column))isInvalid = true;
+      if (!operator_list.includes(operator))isInvalid = true;
+      if (column ==  null || column.length == 0 || 
+        operator == null || operator.length == 0 || 
+        value == null || value.length == 0) isInvalid = true;
+      return { column, operator, value };
+    });
+    if (isInvalid)return [];
+    else return result;
+  };
+
+  const buildSQLQuery = (filters: Array<{ column: string; operator: string; value: string }>) => {
+    const where_filters =  filters
+      .map(({ column, operator, value }) => {
+        // Handle different value types (like strings) if needed
+        let formattedValue = isNaN(Number(value)) ? `${value}` : value;
+        // Convert to database slang
+        if (column === 'title')
+        {
+          formattedValue = `'%${value.replace(/^'|'$/g, '')}%'`;
+        }
+        else if (column === 'author')
+        {
+          column = 'authors.name'
+          formattedValue = `'%${value.replace(/^'|'$/g, '')}%'`;
+        }
+        else if (column === 'genre')
+        {
+          column = 'genres.name'
+          formattedValue = `'%${value.replace(/^'|'$/g, '')}%'`;
+        }
+        else if (column === 'release')
+        {
+          
+          column = 'substr(publication_date, 7, 4)'
+          formattedValue = `'${value.replace(/^'|'$/g, '')}'`
+        }
+        else if (column === 'isbn')
+        {
+          formattedValue = `'${value.split('-').join('').replace(/^'|'$/g, '')}'` 
+        }
+        if (operator === '=') operator = 'LIKE'
+        return `${column} ${operator} ${formattedValue}`;
+      })
+      .join(' AND ');
+    return "WHERE " + where_filters;
+  };
 
 
   const [rows, setRows] = useState<Book[]>([]);
 
+
+  const globPrevSearch = useRef('init');
   // Fetch data when the component mounts or when searchText changes
   useEffect(() => {
-    fetchData(searchText, setRows); // Call the fetch function when searchText changes or component mounts
+    const filters = parseFilters(searchText);
+    if (globPrevSearch.current === 'init' || searchText === '')
+    {
+      fetchData('', setRows);
+      globPrevSearch.current = '';
+    }
+    else if (filters.length != 0)
+    {
+      const sql = buildSQLQuery(filters);
+      if (sql === globPrevSearch.current && !updateInventory) return;
+      globPrevSearch.current = sql;
+      fetchData(sql, setRows);
+    }
   }, [searchText, updateInventory]);
 
 
+  
+  const columns: GridColDef[] = [
+    {
+      field: '__check__',
+      headerName: '',
+      width: 40,
+      sortable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'id',
+      headerName: 'Entry ID',
+      editable: false,
+      align: 'left',
+      flex: 2,
+      minWidth: 120,
+      sortComparator: (v1, v2) => v1.localeCompare(v2)
+    },
+    {
+      field: 'title',
+      headerName: 'Title',
+      editable: false,
+      align: 'left',
+      flex: 2,
+      minWidth: 400,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
+      renderCell: (params) => (
+        <Typography
+          variant="body2"
+          noWrap={false} // Allow text wrapping
+          sx={{
+            whiteSpace: 'normal', // Allow wrapping
+            overflow: 'hidden', // Hide overflowed text if any
+            textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+          }}
+        >
+          {params.value}
+        </Typography>
+      )
+    },
+    {
+      field: 'authors',
+      headerName: 'Author',
+      editable: false,
+      align: 'left',
+      flex: 2,
+      minWidth: 200,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
+      renderCell: (params) => (
+        <Typography
+          variant="body2"
+          noWrap={false} // Allow text wrapping
+          sx={{
+            whiteSpace: 'normal', // Allow wrapping
+            overflow: 'hidden', // Hide overflowed text if any
+            textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+      valueGetter: (params : string[]) => {
+        // Assuming the object has `firstName` and `lastName` properties
+        return `${params.join(', ')}`
+      },
+    },
+    {
+      field: 'genres',
+      headerName: 'Genre',
+      editable: false,
+      align: 'left',
+      flex: 2,
+      minWidth: 100,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
+      renderCell: (params) => (
+        <Typography
+          variant="body2"
+          noWrap={false} // Allow text wrapping
+          sx={{
+            whiteSpace: 'normal', // Allow wrapping
+            overflow: 'hidden', // Hide overflowed text if any
+            textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+      valueGetter: (params : string[]) => {
+        // Assuming the object has `firstName` and `lastName` properties
+        return `${params.join(', ')}`
+      },
+    },
+    {
+      field: 'publication_date',
+      headerName: 'Release',
+      editable: false,
+      align: 'left',
+      flex: 2,
+      minWidth: 50,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
+      valueGetter: (params : Date) => {
+        // Assuming the object has `firstName` and `lastName` properties
+        const [month, , year] = params.toLocaleDateString().split('/');
+        return `${month.padStart(2,'0')}-${year.padStart(2,'0')}`;
+      },
+      renderCell: (params) => (
+        <Typography
+          variant="body2"
+          noWrap={false} // Allow text wrapping
+          sx={{
+            whiteSpace: 'normal', // Allow wrapping
+            overflow: 'hidden', // Hide overflowed text if any
+            textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+            alignItems: 'center',
+            display: 'flex', 
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: 'isbn',
+      headerName: 'ISBN',
+      editable: false,
+      align: 'left',
+      flex: 2,
+      minWidth: 120,
+      sortComparator: (v1, v2) => v1.localeCompare(v2),
+      valueGetter: (params : ISBN10 | ISBN13) => {
+        if ('prefix' in params)
+        {
+          return `${params.prefix.join('')}-${params.isbn10.join('')}`;
+        }
+        else
+        {
+          return `${params.join('')}`;
+        }
+      },
+      renderCell: (params) => (
+        <Typography
+          variant="body2"
+          noWrap={false} // Allow text wrapping
+          sx={{
+            whiteSpace: 'normal', // Allow wrapping
+            overflow: 'hidden', // Hide overflowed text if any
+            textOverflow: 'ellipsis', // Optional: show ellipsis if text overflows
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
+    {
+      field: 'action',
+      headerAlign: 'right',
+      align: 'right',
+      editable: false,
+      sortable: false,
+      flex: 1,
+      minWidth: 100,
+      renderHeader: () => <ActionMenu actions={actions} books={rows} />,
+      renderCell: (params) => {
+        const book = params.row;
+        return <ActionMenu actions={actions} books={[book]} />;
+      },
+    },
+  ];
   
 
   return (

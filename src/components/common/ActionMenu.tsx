@@ -6,18 +6,21 @@ import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import IconifyIcon from 'components/base/IconifyIcon';
+import { Book } from 'database/common';
 
 interface Action {
   id: number;
   icon: string;
   title: string;
+  onClick: (books : Book[]) => void;
 }
 
 interface ActionMenuProps {
   actions: Action[];
+  books : Book[];
 }
 
-const ActionMenu = ({ actions }: ActionMenuProps) => {
+const ActionMenu = ({ actions, books }: ActionMenuProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -31,6 +34,7 @@ const ActionMenu = ({ actions }: ActionMenuProps) => {
 
   const handleActionItemClick = () => {
     handleActionMenuClose();
+    actions.map(x => x.onClick(books));
   };
 
   return (

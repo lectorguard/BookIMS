@@ -12,10 +12,7 @@ export const fetchData = async (searchText: string, setRows: React.Dispatch<Reac
     });
 
     const books_db = response.data as Book_DB[];
-    console.log('Raw data')
-    console.log(books_db);
     const transed = convertToBookArray(books_db);
-    console.log(transed);
     setRows(transed); // Update the rows state with the new data
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -25,20 +22,19 @@ export const fetchData = async (searchText: string, setRows: React.Dispatch<Reac
 
 export const addBookDB = async (book: Book) => {
 
+  const [day, month, year] = book.publication_date.toLocaleDateString().split('/')
   const db_book : Book_DB = {
     book_id: book.id,
     title: book.title,
     authors: book.authors.toString(), 
     genres: book.genres.toString(), 
-    publication_date: book.publication_date.toLocaleDateString(),
+    publication_date: `${day.padStart(2,'0')}/${month.padStart(2,'0')}/${year}`,
     isbn: writeISBN(book.isbn)   
   }
 
   try {
     // Send the book data in the body of the POST request
     const response = await axios.post(`http://localhost:4000/add`, db_book);
-    console.log(response);
-
     // Assuming the server responds with a boolean indicating success
     return response.data as boolean;
   } catch (error) {

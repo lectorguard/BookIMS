@@ -14,27 +14,28 @@ app.use(express.json());
 
 
 // Endpoint to get all books with authors and genres
-app.get('/books', (_req: Request, res: Response): void => {
-    const books: Book_DB[] = db.prepare(`
-      SELECT books.book_id, books.title, books.publication_date, books.isbn,
-             GROUP_CONCAT(authors.name) AS authors,
-             GROUP_CONCAT(genres.name) AS genres
-      FROM books
-      LEFT JOIN book_authors ON books.book_id = book_authors.book_id
-      LEFT JOIN authors ON book_authors.author_id = authors.author_id
-      LEFT JOIN book_genres ON books.book_id = book_genres.book_id
-      LEFT JOIN genres ON book_genres.genre_id = genres.genre_id
-      GROUP BY books.book_id
-    `).all() as Book_DB[]; 
+app.get('/books', (req: Request, res: Response): void => {
+
+    const searchText = req.query.search;
+    const query = `
+    SELECT books.book_id, books.title, books.publication_date, books.isbn,
+       GROUP_CONCAT(DISTINCT authors.name) AS authors,
+       GROUP_CONCAT(DISTINCT genres.name) AS genres
+    FROM books
+    LEFT JOIN book_authors ON books.book_id = book_authors.book_id
+    LEFT JOIN authors ON book_authors.author_id = authors.author_id
+    LEFT JOIN book_genres ON books.book_id = book_genres.book_id
+    LEFT JOIN genres ON book_genres.genre_id = genres.genre_id
+    ${searchText}
+    GROUP BY books.book_id;`
+    
+    const books: Book_DB[] = db.prepare(query).all() as Book_DB[];  
     res.json(books);
   });
 
   // Expect req as Book_DB
   app.post('/add', (req: Request, res: Response): void => {
-    console.log("Before:", req.body);
     const toInsert : Book_DB = req.body;
-    console.log("Received body:", toInsert);
-
     const result = add_book(toInsert);
     res.json(result);
     //res.json(true);
