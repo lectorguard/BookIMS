@@ -9,7 +9,12 @@ import { fetchData } from 'database/requests';
 
 const doExport = (books : Book[]) => 
 {
-  const jsonContent = JSON.stringify(books, null, 2); // Pretty print with 2-space indentation
+  const formattedBooks = books.map(book => ({
+    ...book,
+    publication_date: book.publication_date.toLocaleDateString(),
+    isbn : "prefix" in book.isbn ? `${book.isbn.prefix.join("")}-${book.isbn.isbn10.join("")}` : book.isbn.join("") 
+  }));
+  const jsonContent = JSON.stringify(formattedBooks, null, 2); // Pretty print with 2-space indentation
   const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
@@ -200,7 +205,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 100,
+      minWidth: 200,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       renderCell: (params) => (
         <Typography
