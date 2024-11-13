@@ -48,7 +48,7 @@ export const addBookDB = async (book: Book) => {
 
 const convertToBookArray = (bookDbArray: Book_DB[]): Book[] => {
   return bookDbArray.map((bookDb) => {
-    const [month, day, year] = bookDb.publication_date.split('/').map(Number);
+    const [day, month, year] = bookDb.publication_date.split('/').map(Number);
     return {
       id: bookDb.book_id, // Map book_id to id
       title: bookDb.title, // Map title directly
