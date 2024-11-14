@@ -157,7 +157,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 200,
+      minWidth: 300,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       renderCell: (params) => (
         <Typography
