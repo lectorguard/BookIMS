@@ -165,6 +165,15 @@ const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
       addBookDB(toUpload);
       setUploadSuccess(true);
       setInventoryUpdate(true);
+      setBook({
+        id : 0,
+        title: '',  
+        authors: '', 
+        genres: '',         
+        publication_date: '',  
+        isbn: ''   
+      });
+      
     }
   }, [toUpload]);
 
