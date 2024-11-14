@@ -1,92 +1,103 @@
 # Inventory Management System for Books
 
-Simple react application for front-end and a sqlite express app for back-end.
+A simple React application for the front-end and an Express app with SQLite for the back-end.
 
-# Features 
+## Features 
 
 - Display book inventory in a table
-- Filter inventory based on columns : Title, Author, Genre, Release and ISBN
-- Adding new books via form
-- Export books as json based on query
+- Filter inventory based on columns: Title, Author, Genre, Release Date, and ISBN
+- Add new books via a form
+- Export books as JSON based on queries
 
-# Technologies
+## Technologies
 
 - React
-- Typescript
+- TypeScript
 - SQLite
 - Express
 
-# Prerequisites
+## Prerequisites
 
 - Node.js
 - Tested on Windows 10 and Firefox browser
 
-# Set Up
+## Set Up
 
-- Clone the repository `git clone git@github.com:lectorguard/BookIMS.git` or `git clone https://github.com/lectorguard/BookIMS.git`
-- Inside the BookIMS folder run `npm install`
-- Run `npm run start` to start the client app and the server app together
-    - Alternatively run `npm run dev` for client and `npm run api` for server
-- Web app runs in browser on `http://localhost:3000/base`
+1. Clone the repository:  
+   `git clone git@github.com:lectorguard/BookIMS.git`  
+   or  
+   `git clone https://github.com/lectorguard/BookIMS.git`
+   
+2. Inside the `BookIMS` folder, run:  
+   `npm install`
 
-# Usage
+3. Run the following command to start both the client and server applications together:  
+   `npm run start`
 
-- Add book to inventory
-    - Fill form on the right side of the screen
-    - Clicking  `Add Book` triggers validation
-    - On success, message is printed under the form
+   - Alternatively, you can run the client and server separately:  
+     - `npm run dev` (for the client)  
+     - `npm run api` (for the server)
 
-![alt text](documentation/AddBook.JPG)
+4. The web app runs in the browser at:  
+   `http://localhost:3000/base`
 
-- Books List
-    - Based on the local search and database filters books are shown in the main table
-- DB Search
-    - Click on the filter icon next to the search bar (yellow indicated)
-    - Fill the form based on column, operator and search value
-    - By clicking Add, the filter is added as DB filter to the search bar
-    - You can add multiple filter by filling the form multiple times or writing the db filter by yourself in format `{<column><operator><value>}`
-    - The book table shows automatically the search result 
-- Local Search
-    - Based on the result of the DB search, you can make a search based on any key words by typing it after the db search queries like 
-    `{genre='Horror'} Dracula`
+## Usage
 
-![alt text](documentation/BookTable.JPG)
+### Add a Book to the Inventory
 
+- Fill in the form on the right side of the screen.
+- Clicking **Add Book** triggers validation.
+- On success, a success message is displayed under the form.
 
-- Export 
-    - You can export the current result of a query or a single book by clicking on the three dots of table header or of a single entry (indicated yellow)
-    - When clicking export, a json file containing the selected books is downloaded (indicated yellow)
+![Add Book Form](documentation/AddBook.JPG)
 
-![alt text](documentation/Export.JPG)
+### Books List
 
-- Demo
+- Books are displayed in the main table based on the local search and database filters.
 
-https://github.com/user-attachments/assets/a8af42f0-b516-4235-8e0b-8e39a19f748c
+### Database Search
 
+1. Click on the filter icon next to the search bar (highlighted in yellow).
+2. Fill in the form based on the column, operator, and search value.
+3. By clicking **Add**, the filter is added to the search bar as a database filter.
+4. You can add multiple filters by filling out the form multiple times or by manually writing the filter in the format `{<column><operator><value>}`.
+5. The book table automatically updates to show the filtered results.
 
-![](documentation/Demo.mov)
+### Local Search
 
-# Relevant Code 
+- After performing a database search, you can further search using keywords. Simply type the keywords after the database query, like:  
+  `{genre='Horror'} Dracula`
 
-- The relevant code for this project is located in two folders
-    - `src/components/sections/dashboard/`
-    - `src/components/database/`
-- Database is created on the fly when running the project in the project root (`books.db`)
+![Book Table](documentation/BookTable.JPG)
 
-# Design Decisions 
+### Export Data
 
-- The design is based on a theme from [themewagon](https://themewagon.com/), which brings out of the box adaption to screen sizes and modern UI
-- All adoptions of the design were derived from the themewagon theme
+- You can export the current search result or a single book by clicking on the three dots in the table header or next to a book entry (highlighted in yellow).
+- When you click **Export**, a JSON file containing the selected books will be downloaded.
 
-# Challenges 
+![Export](documentation/Export.JPG)
 
-- The biggest challenge was the conversion from the database book format to a more strict client side Book format : 
-    - Conversion of different date formats
-    - Conversion of ISBN formats
-- Validation of inputs in the Add Book form
-- Internal validation of database queries
+### Demo
 
+[View Demo](https://github.com/user-attachments/assets/a8af42f0-b516-4235-8e0b-8e39a19f748c)
 
+## Relevant Code
 
+- The relevant code for this project is located in the following two folders:
+  - `src/components/sections/dashboard/`
+  - `src/components/database/`
 
+- The database (`books.db`) is created automatically when running the project in the root directory.
 
+## Design Decisions
+
+- The design is based on a theme from [ThemeWagon](https://themewagon.com/), which provides out-of-the-box responsiveness and modern UI components.
+- All design adaptations were derived from this theme.
+
+## Challenges
+
+- The biggest challenge was converting the database book format to a stricter client-side book format:
+  - Handling different date formats
+  - Converting ISBN formats
+- Validating inputs in the **Add Book** form
+- Performing internal validation of database queries
