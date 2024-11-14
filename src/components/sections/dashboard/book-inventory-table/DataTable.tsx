@@ -148,7 +148,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 120,
+      minWidth: 60,
       sortComparator: (v1, v2) => v1.localeCompare(v2)
     },
     {
@@ -157,7 +157,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 400,
+      minWidth: 200,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       renderCell: (params) => (
         <Typography
@@ -179,7 +179,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 200,
+      minWidth: 100,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       renderCell: (params) => (
         <Typography
@@ -205,7 +205,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 200,
+      minWidth: 100,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       renderCell: (params) => (
         <Typography
@@ -231,7 +231,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 50,
+      minWidth: 60,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params : Date) => {
         // Assuming the object has `firstName` and `lastName` properties
@@ -260,7 +260,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       align: 'left',
       flex: 2,
-      minWidth: 120,
+      minWidth: 95,
       sortComparator: (v1, v2) => v1.localeCompare(v2),
       valueGetter: (params : ISBN10 | ISBN13) => {
         if ('prefix' in params)
@@ -293,7 +293,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       editable: false,
       sortable: false,
       flex: 1,
-      minWidth: 100,
+      minWidth: 50,
       renderHeader: () => <ActionMenu actions={actions} books={rows} />,
       renderCell: (params) => {
         const book = params.row;
@@ -301,7 +301,6 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       },
     },
   ];
-  
 
   return (
     <DataGrid
@@ -328,6 +327,7 @@ const DataTable = ({ searchText, updateInventory }: TaskOverviewTableProps) => {
       }}
       checkboxSelection
       pageSizeOptions={[15]}
+      autoHeight
     />
   );
 };

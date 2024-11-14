@@ -168,7 +168,7 @@ const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
 
 
   return (
-    <Paper sx={{ padding: 0 }}>
+    <Paper sx={{ padding: 0, minWidth : 100}}>
       <Stack spacing={2}>
         <form onSubmit={handleSubmit}>
         <Grid container spacing={5}>
