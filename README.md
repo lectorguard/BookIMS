@@ -60,7 +60,9 @@ Simple react application for front-end and a sqlite express app for back-end.
 ![alt text](documentation/Export.JPG)
 
 - Demo
-    - Can be found in documentation folder
+
+https://github.com/user-attachments/assets/a8af42f0-b516-4235-8e0b-8e39a19f748c
+
 
 ![](documentation/Demo.mov)
 
