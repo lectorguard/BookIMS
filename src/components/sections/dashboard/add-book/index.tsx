@@ -17,15 +17,17 @@ interface AddBookProps {
 
 const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
 
+  // Book information from form
   const [book, setBook] = useState({
     id : 0,
-    title: '',  // Set default value for title
-    authors: '', // Set default value for author
-    genres: '',         // Set default value for genre
-    publication_date: '',    // Set default value for release
-    isbn: ''   // Set default value for ISBN
+    title: '',  
+    authors: '', 
+    genres: '',         
+    publication_date: '',  
+    isbn: ''   
   });
 
+  // Errors for each cell in add book form
   const [error, setError] = useState({
      title: '', 
      authors: '',
@@ -34,9 +36,9 @@ const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
      isbn : '' 
   });
 
-
+  // Book to upload
   const [toUpload, setUpload] = useState<Book>();
-
+  // Show success message flag
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -59,7 +61,7 @@ const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
     if (value.length === 7) {
       const month = value.split('-').map(Number)[0];
   
-      // Check if the month is in the valid range (1-12)
+      // Check the month range
       if (month < 1 || month > 12) {
         return false;
       }
@@ -97,7 +99,6 @@ const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
     {
       setError((err) => ({...err, authors : "Comma seperated authors can not be empty"}));succ = false;
     }
-
     // Handle genre
     if(book.genres.length == 0)
     {
@@ -129,34 +130,35 @@ const AddBookForm = ({setInventoryUpdate}: AddBookProps) => {
 
     if (succ)
     {
-        const [month, year] = book.publication_date.length > 4 ? 
-          book.publication_date.split('-') :
-          ['01', book.publication_date];
-        const temp : Book = {
-          id : String(generateNumericUUID()),
-          title : book.title,
-          authors : book.authors.split(',').map(author => author.trim()),
-          genres : book.genres.split(',').map(genre => genre.trim()),
-          publication_date : new Date(`${year}-${month}-01`),
-          isbn : parseISBN(book.isbn.replace(/-/g, ''))
-        }
-        // When you set uploadSuccess to true, ensure that the effect will trigger
-        setUpload(temp);
+      // prepare date
+      const [month, year] = book.publication_date.length > 4 ? 
+        book.publication_date.split('-') :
+        ['01', book.publication_date];
+      // write Book
+      const temp : Book = {
+        id : String(generateNumericUUID()),
+        title : book.title,
+        authors : book.authors.split(',').map(author => author.trim()),
+        genres : book.genres.split(',').map(genre => genre.trim()),
+        publication_date : new Date(`${year}-${month}-01`),
+        isbn : parseISBN(book.isbn.replace(/-/g, ''))
+      }
+      // Set upload to trigger effect
+      setUpload(temp);
     }    
   };
 
+  // Effect to display successful inserted message
   useEffect(() => {
     if (uploadSuccess) {
-
       const timer = setTimeout(() => {
         setUploadSuccess(false);
       }, 2000);
-
-      // Clean up the timer when the component unmounts or uploadSuccess changes
       return () => clearTimeout(timer);
     }
   }, [uploadSuccess]); 
 
+  // Add book into database
   useEffect(() => {
     if (toUpload)
     {

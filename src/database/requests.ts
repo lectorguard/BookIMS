@@ -4,7 +4,7 @@ import {Book, Book_DB, ISBN10, ISBN13} from './common';
 import axios from 'axios';
 
 
-// Define the function and export it
+// Fetch books using search query from api and update book table
 export const fetchData = async (searchText: string, setRows: React.Dispatch<React.SetStateAction<Book[]>>) => {
   try {
     const response = await axios.get(`http://localhost:4000/books`, {
@@ -19,9 +19,10 @@ export const fetchData = async (searchText: string, setRows: React.Dispatch<Reac
   }
 };
 
-
+// Post book to db via api
 export const addBookDB = async (book: Book) => {
 
+  // We convert internal Book representation to Book_DB
   const [day, month, year] = book.publication_date.toLocaleDateString().split('/')
   const db_book : Book_DB = {
     book_id: book.id,
@@ -40,26 +41,24 @@ export const addBookDB = async (book: Book) => {
   } catch (error) {
     // If an error occurs, log it to the console
     console.error('Error posting data:', error);
-
-    // Optionally, return false or handle the error in a way that makes sense
     return false;
   }
 };
 
+// Helper function to convert from Book_DB to Book
 const convertToBookArray = (bookDbArray: Book_DB[]): Book[] => {
   return bookDbArray.map((bookDb) => {
     const [day, month, year] = bookDb.publication_date.split('/').map(Number);
     return {
-      id: bookDb.book_id, // Map book_id to id
-      title: bookDb.title, // Map title directly
-      authors: bookDb.authors.split(',').map(author => author.trim()), // Split concatenated authors and trim spaces
-      genres: bookDb.genres.split(',').map(genre => genre.trim()), // Split concatenated genres and trim spaces
-      publication_date: new Date(year, month - 1, day), // Convert the publication_date to a Date object
-      isbn: parseISBN(bookDb.isbn), // Assuming you have a function to parse ISBN into the proper format
+      id: bookDb.book_id, 
+      title: bookDb.title, 
+      authors: bookDb.authors.split(',').map(author => author.trim()), 
+      genres: bookDb.genres.split(',').map(genre => genre.trim()), 
+      publication_date: new Date(year, month - 1, day), 
+      isbn: parseISBN(bookDb.isbn), 
     };
   });
 };
-
 
 export const parseISBN = (isbn: string): ISBN10 | ISBN13 => {
   if(isbn.length == 13)

@@ -17,6 +17,7 @@ interface InventoryProps {
 
 
 const BookInventory = ({ updateInventory }: InventoryProps) => {
+  // States related to search bar and filter form
   const [searchText, setSearchText] = useState('');
   const [filterVisible, setFilterVisible] = useState(false);
   const [filterColumn, setFilterColumn] = useState('');
@@ -27,6 +28,7 @@ const BookInventory = ({ updateInventory }: InventoryProps) => {
     setSearchText(e.target.value);
   };
 
+  // Validate database search query from form
   const handleFilter = (e: MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
 
@@ -173,9 +175,6 @@ const BookInventory = ({ updateInventory }: InventoryProps) => {
         <DataTable
           searchText={searchText}
           updateInventory={updateInventory}
-          //filterColumn={filterColumn}
-          //filterOperator={filterOperator}
-          //filterValue={filterValue}
         />
       </Box>
     </Paper>

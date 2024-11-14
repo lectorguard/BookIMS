@@ -5,17 +5,17 @@ const db = new Database('books.db');
 
 db.exec('PRAGMA foreign_keys = ON;');
 
-// Update table creation to allow `book_id` as an external UUID instead of auto-incrementing
+// Base information using custom uuid from the app
 db.exec(`
   CREATE TABLE IF NOT EXISTS books (
     book_id TEXT PRIMARY KEY,  -- use UUID passed from the app
     title TEXT NOT NULL,
     publication_date TEXT,
-    isbn TEXT NOT NULL  -- Remove the UNIQUE constraint here
+    isbn TEXT NOT NULL
   );
 `);
 
-// Create tables for authors, genres, book_authors, and book_genres (no changes here)
+// Create tables for authors, genres, book_authors, and book_genres to improve performance
 db.exec(`
   CREATE TABLE IF NOT EXISTS authors (
     author_id INTEGER PRIMARY KEY AUTOINCREMENT,

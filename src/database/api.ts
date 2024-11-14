@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import db ,{add_book} from './db'; // Assuming db.ts is exporting the database instance
+import db ,{add_book} from './db';
 import {Book_DB} from './common'
 import cors from 'cors';
 
@@ -9,8 +9,6 @@ const PORT = 4000;
 
 app.use(cors());
 app.use(express.json());
-
-// Define a type for the books data
 
 
 // Endpoint to get all books with authors and genres
@@ -33,7 +31,7 @@ app.get('/books', (req: Request, res: Response): void => {
     res.json(books);
   });
 
-  // Expect req as Book_DB
+  // Expect req as Book_DB, adds book to db
   app.post('/add', (req: Request, res: Response): void => {
     const toInsert : Book_DB = req.body;
     const result = add_book(toInsert);
